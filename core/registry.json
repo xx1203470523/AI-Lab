@@ -1,12 +1,13 @@
 {
-  "version": "1.0",
-  "description": "AI 工程化全局索引 — 定义 skill / rule / agent 的注册与路由",
+  "version": "2.0",
+  "description": "AI 工程化全局索引 — 定义 skill / rule / agent / workflow 的注册与路由",
 
   "skills": {
     "sql_optimize": "core/skills/sql/optimize.md",
     "sql_index_check": "core/skills/sql/index-check.md",
     "dotnet_service_review": "core/skills/code-review/dotnet-service.md",
     "bug_analysis": "core/skills/general/bug-analysis.md",
+    "model_switch": "core/skills/general/model-switch.md",
     "repeat_submit_check": "projects/wms/skills/repeat-submit-check.md",
     "stock_consistency": "projects/wms/skills/stock-consistency.md",
     "pda_sync_check": "projects/wms/skills/pda-sync-check.md",
@@ -17,7 +18,35 @@
   "agents": {
     "reviewer": "core/agents/reviewer.md",
     "architect": "core/agents/architect.md",
-    "sql_expert": "core/agents/sql-expert.md"
+    "sql_expert": "core/agents/sql-expert.md",
+    "v4pro": "core/agents/v4-pro.md"
+  },
+
+  "models": {
+    "deepseek-v4-flash": {
+      "description": "默认模型，日常开发辅助，快速响应",
+      "agents": ["reviewer", "architect", "sql_expert"],
+      "role": "executor"
+    },
+    "deepseek-v4-pro": {
+      "description": "深度推理模型，代码审查、疑难问题、架构设计",
+      "agents": ["v4pro"],
+      "trigger": "claude --model deepseek-v4-pro",
+      "role": "reviewer"
+    }
+  },
+
+  "workflows": {
+    "protocol": "runtime/workflows/workflow-protocol.md",
+    "code_review": "runtime/workflows/code-review.workflow.md",
+    "performance": "runtime/workflows/performance.workflow.md",
+    "architecture": "runtime/workflows/architecture.workflow.md"
+  },
+
+  "routing": {
+    "agent_routing": "runtime/agent-routing.md",
+    "skill_map": "runtime/skill-map.md",
+    "execution_flow": "runtime/execution-flow.md"
   },
 
   "rules": {

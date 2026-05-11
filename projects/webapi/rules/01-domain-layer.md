@@ -3,6 +3,25 @@
 > 对应项目：`Domain.Warehouse`, `Domain.System`, `Domain.Logging`, `Domain.BI`, `Domain.Shared` 等
 > 物理位置：`Domain/` 目录下
 
+## 命名空间约定
+
+**Domain 层全部使用扁平命名空间，物理文件夹仅用于组织，不影响命名空间。**
+
+```
+物理路径:  Domain/Domain.Warehouse/Entities/Core/Trade.cs
+命名空间:   namespace Domain.Warehouse;       ← 扁平
+
+物理路径:  Domain/Domain.Warehouse/Repositories/Base/BaseContainerRepository.cs
+命名空间:   namespace Domain.Warehouse;       ← 扁平
+
+物理路径:  Domain/Domain.Warehouse/Commands/OutStock/OutStockPickOrderDetailUpdateCommand.cs
+命名空间:   namespace Domain.Warehouse;       ← 扁平
+```
+
+**规则：Domain 下所有文件统一使用 `namespace Domain.{Module};`，禁止按子文件夹加层级。**
+
+`Application.Admin/GlobalUsing.cs` 已全局引入 `Domain.Warehouse` 和 `Domain.System`，Controller 可直接使用实体/仓储类型，无需额外 using。
+
 ## 实体继承体系
 
 所有实体必须遵循以下继承链之一：

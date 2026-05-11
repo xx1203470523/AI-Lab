@@ -3,6 +3,42 @@
 > 对应项目：`Services.Warehouse`, `Services.Report`, `Services.BI`, `Services.System` 等
 > 物理位置：`Services/` 目录下
 
+## 命名空间约定
+
+**Service 层绝大多数使用扁平命名空间 `Services.Warehouse`，物理文件夹仅用于组织，不影响命名空间。**
+
+```
+物理路径:  Services/Services.Warehouse/Services/Interfaces/AutoPost/IAutoPostService.cs
+命名空间:   namespace Services.Warehouse;              ← 扁平（大多数）
+
+物理路径:  Services/Services.Warehouse/Services/Implementations/AutoPost/AutoPostService.cs
+命名空间:   namespace Services.Warehouse;              ← 扁平（大多数）
+
+物理路径:  Services/Services.Warehouse/AutoPost/SceneAutoInStockService.cs
+命名空间:   namespace Services.Warehouse;              ← 扁平（大多数）
+```
+
+**少数例外使用深层命名空间**（历史遗留）：
+
+```
+IInStockUpShelvesNoticeService  →  namespace Services.Warehouse.Services.Interfaces.InStock;
+IErpIQCResultSyncService       →  namespace Services.Warehouse.Interfaces.Sync;
+IMatchMakingService             →  namespace Services.Warehouse.Services.Interfaces.Fix;
+IBaseUrgencyMaterialChargeService → namespace Services.Warehouse.Services.Interfaces.Base;
+```
+
+**规则：**
+
+1. **新代码一律使用 `namespace Services.Warehouse;`（扁平），不按文件夹建深层命名空间**
+2. **添加 using 时必须以目标文件的实际 `namespace` 声明为准，禁止按文件夹路径猜测**
+3. `Application.Admin/GlobalUsing.cs` 已全局引入 `Services.Warehouse`，覆盖大多数接口，Controller 无需额外 using
+4. 如需引用深层命名空间的接口（如上表例外），需在 Controller 中显式 `using`
+
+验证方法：
+```
+找到目标接口文件 → 读第一行 namespace xxx; → 按实际写 using
+```
+
 ## 目录结构
 
 ```

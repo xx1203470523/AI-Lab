@@ -13,6 +13,11 @@
   → 按需加载关联 rules 和 agents
 ```
 
+## 模型选择
+- 用户输入带 `[v4pro]` 标记 → 切换到 v4 Pro 模型执行
+- 代码审查类任务 → 建议使用 v4 Pro
+- 常规开发辅助 → v4 Flash（默认）
+
 ## 领域-意图映射
 
 | 领域 | 意图 | Skill |
@@ -25,3 +30,4 @@
 | WebApi-代码 | 审查 | dotnet_service_review |
 | 全局 | SQL优化 | sql_optimize |
 | 全局 | Bug分析 | bug_analysis |
+| 全局 | 模型切换 | model_switch |

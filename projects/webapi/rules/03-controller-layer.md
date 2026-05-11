@@ -98,6 +98,43 @@ public class InStockReportController : ControllerAbstract
 | 导出方法 | `GetXxxExportAsync` | `GetInStockOrderListExportAsync` |
 | 查询参数 | `[FromQuery]` | `[FromQuery] InStockOrderReportQueryDto parm` |
 
+## 命名空间与 Using
+
+### 全局 Using
+
+以下命名空间已在 `Application.Admin/GlobalUsing.cs` 中全局引入，**Controller 无需重复 using**：
+
+| 全局 Using | 覆盖内容 |
+|------------|----------|
+| `Services.Warehouse` | 大部分 Service 接口（`ICommonQueueAutoPostService`、`INoticeService` 等） |
+| `Services.System` | System 相关 Service |
+| `Services.Shared` | 共享 Service |
+| `Services.Scheduler` | 调度相关 Service |
+| `Domain.Warehouse` | WMS 领域实体 |
+| `Domain.System` | System 领域实体 |
+| `Domain.Shared` | 共享基类（`EntityAbstract`、枚举等） |
+| `Furion` | Furion 框架 |
+| `SqlSugar` | ORM |
+
+### 命名空间陷阱
+
+**Service 接口的物理文件夹路径 ≠ C# 命名空间。**
+
+```
+物理路径:  Services/Services.Warehouse/Services/Interfaces/AutoPost/IAutoPostService.cs
+实际命名空间: namespace Services.Warehouse;                        ← 扁平！
+
+物理路径:  Services/Services.Warehouse/Services/Interfaces/InStock/UpShelves/IInStockUpShelvesNoticeService.cs
+实际命名空间: namespace Services.Warehouse.Services.Interfaces.InStock;  ← 深层（例外）
+```
+
+**规则：添加 using 时必须以实际 `namespace` 声明为准，禁止按文件夹路径猜测。**
+
+验证方法：
+1. 打开目标接口文件，查看第一行 `namespace xxx;`
+2. 如果已在 `GlobalUsing.cs` 中，无需重复 using
+3. 如果不在，按实际命名空间添加 using
+
 ## 权限与审计
 
 ```csharp
