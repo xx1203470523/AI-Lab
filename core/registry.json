@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "description": "AI 工程化全局索引 — 定义 skill / rule / agent 的注册与路由",
+
+  "skills": {
+    "sql_optimize": "core/skills/sql/optimize.md",
+    "sql_index_check": "core/skills/sql/index-check.md",
+    "dotnet_service_review": "core/skills/code-review/dotnet-service.md",
+    "bug_analysis": "core/skills/general/bug-analysis.md",
+    "repeat_submit_check": "projects/wms/skills/repeat-submit-check.md",
+    "stock_consistency": "projects/wms/skills/stock-consistency.md",
+    "pda_sync_check": "projects/wms/skills/pda-sync-check.md",
+    "new_report": "projects/webapi/skills/new-report.md",
+    "debug_report": "projects/webapi/skills/debug-report.md"
+  },
+
+  "agents": {
+    "reviewer": "core/agents/reviewer.md",
+    "architect": "core/agents/architect.md",
+    "sql_expert": "core/agents/sql-expert.md"
+  },
+
+  "rules": {
+    "sql": "core/rules/sql.md",
+    "api_design": "core/rules/api-design.md",
+    "architecture": "core/rules/architecture.md",
+    "concurrency": "core/rules/concurrency.md",
+    "wms_business": "projects/wms/rules/wms-business.md",
+    "domain_layer": "projects/webapi/rules/01-domain-layer.md",
+    "service_layer": "projects/webapi/rules/02-service-layer.md",
+    "controller_layer": "projects/webapi/rules/03-controller-layer.md",
+    "report_module": "projects/webapi/rules/04-report-module.md"
+  },
+
+  "prompts": {
+    "debug": "core/prompts/debug.md",
+    "refactor": "core/prompts/refactor.md",
+    "analyze_performance": "core/prompts/analyze-performance.md"
+  }
+}
