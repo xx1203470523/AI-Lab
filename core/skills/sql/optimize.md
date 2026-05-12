@@ -1,39 +1,39 @@
-# SQL 优化技能
+# SQL 优化
 
-## 适用场景
+## Trigger
+
 - 报表查询慢
 - 导出 OOM
 - 接口响应超时
+- 涉及 3+ 表 Join 的分页查询
 
-## 排查流程
-1. **检查查询计划** — 确认 Join 顺序和索引使用
-2. **检查 Select 投影** — 是否拉了不需要的列
-3. **检查数据量** — 过滤条件是否能有效减少数据
-4. **检查后处理** — 是否有 foreach 内逐条查库
+## Goal
 
-## 优化手段
+防止：
 
-### Select 投影
-```csharp
-// 差：查全部列
-var data = _repo.Queryable().ToList();
-// 好：只查需要的列
-var data = _repo.Queryable().Select(a => new { a.Id, a.Name }).ToList();
-```
+- 全表扫描
+- 行爆炸
+- N+1 查询
+- 不必要的数据传输
 
-### 批处理替代逐条
-```csharp
-// 差：foreach 内查库
-foreach (var item in list) {
-    var detail = _repo.GetById(item.Id);
-}
-// 好：批量查 + Lookup
-var ids = list.Select(a => a.Id).ToList();
-var details = _repo.Queryable().Where(a => ids.Contains(a.Id)).ToList();
-var lookup = details.ToLookup(a => a.HeadId);
-```
+## Checklist
 
-### 拆大 Join
-- 超过 5 表 Join 考虑拆成多次查询
-- 主查询只查头表 + 核心维度
-- 子表数据在内存中通过 ToLookup 关联
+- [ ] 主查询 Join 是否超过 5 表
+- [ ] Select 是否只投影需要的列
+- [ ] Where 条件是否有效减少数据量
+- [ ] 是否在 foreach 内逐条查库
+- [ ] 时间范围查询是否有索引
+
+## Common Fix
+
+1. 拆大 Join：主查询只查头表+核心维度，子表数据用 ToLookup 内存关联
+2. Select 投影：只选需要的列，不拉大字段
+3. 批量替换逐条：先收集 ID 集合，一次查回，再 Lookup/Dictionary
+4. WhereIF 判空：Contains 前判空，空列表填充 `[-1]`
+
+## Forbidden
+
+- 禁止 foreach 内访问数据库
+- 禁止 select * 查全部列
+- 禁止 5+ 表 Join 不分页直接 ToList
+- 禁止在应用层做聚合替代数据库 GROUP BY

@@ -101,6 +101,122 @@ public class InStockOrderReportExportDto
 - 时间字段用 `[ExcelFormat("yyyy-MM-dd HH:mm:ss")]` 标注
 - 所有DTO类集中在 `Dtos/` 目录下（按模块分文件）
 
+### Excel 导出 DTO 字段规范
+
+对于 Excel 导出场景，原始字段和展示名称字段需遵循以下约束：
+
+#### 状态类字段
+
+原始枚举/状态字段不直接导出，改为 `StatusName` 等展示名称字段：
+
+```csharp
+// ❌ 不直接导出原始状态
+[DisplayName("状态")]
+public string? Status { get; set; }
+
+// ✅ 导出展示名称（ExcelDto 中只保留此字段）
+[DisplayName("状态")]
+public string StatusName { get; set; } = string.Empty;
+```
+
+映射时统一使用 `ToEnum<T>().GetDescription()` 模式（与 `ExportAsync` 一致）：
+
+```csharp
+// 枚举字段 → DisplayName
+UpStatusName = x.UpStatus.ToEnum<EUpStatus>(EUpStatus.NotOnShelves).GetDescription();
+
+// 字符串字段 → 对应枚举 → DisplayName
+StatusName = x.Status.ToEnum<EPickingStatus>(EPickingStatus.Pending).GetDescription();
+```
+
+#### 人员编码 → 人员名称
+
+分两步：先批量查 `SysUser` 构建字典，再在 Select 中映射：
+
+```csharp
+// 1. 收集所有人员编码去重
+var personCodes = rows
+    .SelectMany(x => new[] { x.BillPerson, x.Operator })
+    .Where(x => !string.IsNullOrWhiteSpace(x))
+    .Distinct()
+    .ToList();
+
+// 2. 批量查询 SysUser 构建字典（UserName → NickName）
+var users = await _sysUserRepository.Queryable()
+    .Where(x => personCodes.Contains(x.UserName))
+    .ToListAsync();
+var userDict = users.ToDictionary(x => x.UserName, x => x.NickName);
+
+// 3. DTO 中增加人员名称字段，映射时查字典
+// DTO 字段:
+// [DisplayName("制单人名称")]
+// public string? BillPersonName { get; set; }
+
+// 映射:
+BillPersonName = userDict.GetValueOrDefault(x.BillPerson) ?? x.BillPerson,
+```
+
+#### 业务类型编码 → 业务类型名称
+
+按数据类型不同，使用不同方式转换：
+
+- **出库单据** (`OutStockPickOrder.BusinessType`)：字符串 → `EOutStockBillType` 枚举 → `GetDescription()`
+
+```csharp
+BusinessTypeName = x.BusinessType.ToEnum<EOutStockBillType>(EOutStockBillType.MiscIssue).GetDescription();
+```
+
+- **入库单据** (`InStockUpShelves.BusinessType`)：查 `SysDictData` 字典表
+
+```csharp
+var businessList = await _sysDictDataRepository.Queryable()
+    .Where(x => x.DictType == "BusinessType")
+    .ToListAsync();
+var businessDict = businessList.ToDictionary(m => m.DictValue, m => m.DictLabel);
+
+BusinessTypeName = businessDict.GetValueOrDefault(x.BusinessType) ?? x.BusinessType;
+```
+
+#### 日期字段
+
+所有导出日期字段必须标注 `[ExcelFormat("yyyy-MM-dd HH:mm:ss")]`：
+
+```csharp
+[DisplayName("制单日期")]
+[ExcelFormat("yyyy-MM-dd HH:mm:ss")]
+public DateTime? MakeBillDate { get; set; }
+```
+
+#### 映射方式
+
+优先使用 `Adapt<>()` + Mapster 配置（静态构造中注册），对于需要外部字典查询的字段，通过 **预设源对象属性** 或 **Mapster `.Map()` 闭包** 处理。仅在外围查询逻辑复杂、无法通过配置表达时，才退化到手动 `.Select()`。
+
+```csharp
+// 优先：Mapster 静态配置（静态构造注册一次）
+static XxxService()
+{
+    TypeAdapterConfig<Source, Dest>.NewConfig()
+        .Map(dest => dest.StatusName, src => src.Status.GetEnumDisplayName());
+}
+
+// 查询 + Adapt
+var rows = await _repo.Queryable()...ToListAsync();
+var result = rows.Adapt<List<Dest>>();
+```
+
+```csharp
+// 退化：外部字典查询 + 手动映射（仅当无法用配置表达时）
+var rows = await _repo.Queryable()...ToListAsync();
+var userDict = await LoadUserDictAsync(rows);  // 外部字典
+var index = 1;
+return rows.Select(x => new Dest
+{
+    Index = index++,
+    StatusName = x.Status.ToEnum<T>(T.Default).GetDescription(),
+    PersonName = userDict.GetValueOrDefault(x.Person) ?? x.Person,
+}).ToList();
+```
+
 ## 接口规范
 
 ```csharp

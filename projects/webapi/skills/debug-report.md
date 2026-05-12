@@ -1,28 +1,32 @@
 # 报表调试
 
-报表查询慢 / 导出 OOM / 数据不对的排查流程。
+## Trigger
 
-## 查询慢
+- 报表查询慢
+- 导出 OOM
+- 报表数据不对
 
-1. 检查主查询 Join 表数 — 超过 5 表 Join 考虑拆查询
-2. 检查 `.Select()` 投影 — 只选需要的 3-5 列
-3. 检查 `WhereIF` 条件 — 所有 `Contains` 前判空，空列表填充 `[-1]`
-4. 检查后处理 — 不用 foreach 逐条查库，用 Lookup/Dictionary
+## Goal
 
-## 导出 OOM
+快速定位报表性能/数据问题根因。
 
-**根因：** 主查询多表 LEFT JOIN 导致行爆炸
-- 例：`PickOrder 1:N Detail 1:N Label M:N Supplier`
-- 把导致行爆炸的表从主查询中移除，在 `FillDetailDataAsync` 中批量回查
+## Checklist
 
-```csharp
-var headIds = pageData.Result.Select(a => a.Id).ToList();
-var labels = await _labelRepo.Queryable()
-    .Where(a => headIds.Contains(a.HeadId)).ToListAsync();
-var labelLookup = labels.ToLookup(a => a.HeadId);
-```
+- [ ] 主查询 Join 表数是否超过 5 表
+- [ ] `.Select()` 是否只投影需要的列
+- [ ] `WhereIF` 条件中 Contains 前是否判空
+- [ ] 后处理是否用了 foreach 逐条查库
+- [ ] 枚举显示是否用 `ToEnum<T>().GetDescription()`
 
-## 其他问题
-- **空数据** → 检查时间/状态条件是否过严
-- **枚举显示不对** → 确保使用 `ToEnum<T>().GetDescription()`
-- **人员名称为登录名** → 批量查 SysUser 做 Dictionary 映射
+## Common Fix
+
+1. **查询慢** → 拆 Join、加 Select 投影、WhereIF 判空
+2. **导出 OOM** → 行爆炸的表移出主查询，在 FillDetailDataAsync 批量回查
+3. **空数据** → 检查时间/状态过滤条件是否过严
+4. **人员名称显示登录名** → 批量查 SysUser 做 Dictionary 映射
+
+## Forbidden
+
+- 禁止导出不加 Redis 锁
+- 禁止多对多关系 Join 进主查询导出
+- 禁止 foreach 逐条查库填充明细

@@ -1,162 +1,350 @@
-# AI Lab — WMS AI 工程化上下文
+# AI-Lab 工程化结构说明
 
-AI 协作上下文、规则、技能和运行机制的集中管理目录。
+本目录用于统一管理 AI Coding 的：
 
-> 本目录已被 `.gitignore` 忽略，不会提交到代码仓库，仅供 AI 协作使用。
+- 全局规则（Rules）
+- 问题解决流程（Skills）
+- 项目上下文（Context）
+- AI 文件生成规范（Standards）
+- 多模型协作（Workflow）
+
+目标：
+
+> 让 AI 在不同项目中稳定工作，而不是无限生成混乱 Prompt 与 Markdown。
 
 ---
 
-## 目录结构
+# 目录结构
 
-```
+```text
 ai-lab/
 │
-├── core/                          # 能力库（跨项目通用）
-│   ├── registry.json              # 全局索引 — skill / rule / agent / workflow 注册
-│   │
-│   ├── rules/                     # 通用规范
-│   │   ├── sql.md                 # SQL 查询规范
-│   │   ├── api-design.md          # API 设计规范
-│   │   ├── architecture.md        # 架构分层规范
-│   │   └── concurrency.md         # 并发安全规范
-│   │
-│   ├── skills/                    # 可复用技能
-│   │   ├── sql/
-│   │   │   ├── optimize.md        # SQL 优化
-│   │   │   └── index-check.md     # 索引检查
-│   │   ├── code-review/
-│   │   │   └── dotnet-service.md  # .NET Service 审查
-│   │   └── general/
-│   │       ├── bug-analysis.md    # Bug 分析
-│   │       └── model-switch.md    # 模型切换与多窗口协作
-│   │
-│   ├── agents/                    # AI Agent 定义
-│   │   ├── reviewer.md            # 代码审查员
-│   │   ├── architect.md           # 架构师
-│   │   ├── sql-expert.md          # SQL 专家
-│   │   └── v4-pro.md              # v4 Pro 深度推理 Agent
-│   │
-│   └── prompts/                   # 常用 Prompt 模板
-│       ├── debug.md               # 调试
-│       ├── refactor.md            # 重构
-│       └── analyze-performance.md # 性能分析
+├── core/                     # 全局通用能力（跨项目）
 │
-├── projects/                      # 业务隔离层
-│   ├── wms/                       # WMS 领域
-│   │   ├── CLAUDE.md              # 项目上下文
-│   │   ├── context.md             # 模块概览
+│   ├── standards/            # ⭐ 元规范（规范AI如何写AI文件）
+│   ├── rules/                # 强约束
+│   ├── skills/               # 问题解决流程
+│   ├── agents/               # AI角色风格（可选）
+│   └── workflows/            # 多模型协作（可选）
+│
+│
+├── projects/                 # 项目级上下文
+│
+│   ├── webapi/
+│   │   ├── CLAUDE.md
+│   │   ├── context.md
+│   │   ├── context-map.md
 │   │   ├── rules/
-│   │   │   └── wms-business.md    # 入库/出库/库存业务规范
-│   │   └── skills/
-│   │       ├── repeat-submit-check.md  # 防重复提交
-│   │       ├── stock-consistency.md    # 库存一致性
-│   │       └── pda-sync-check.md       # PDA 同步检查
+│   │   ├── skills/
+│   │   └── architecture/
 │   │
-│   ├── webapi/                    # 后端 API 专属
-│   │   ├── CLAUDE.md              # 项目上下文
-│   │   ├── rules/                 # 分层规范
-│   │   │   ├── 01-domain-layer.md
-│   │   │   ├── 02-service-layer.md
-│   │   │   ├── 03-controller-layer.md
-│   │   │   └── 04-report-module.md
-│   │   └── skills/
-│   │       ├── new-report.md      # 新增报表
-│   │       └── debug-report.md    # 报表调试
-│   │
-│   └── pda/                       # PDA 手持终端
-│       └── CLAUDE.md
+│   ├── pda/
+│   └── wmsweb/
 │
-└── runtime/                       # 运行机制
-    ├── skill-map.md               # 输入 → Skill 匹配规则
-    ├── agent-routing.md           # Agent 选择 + 跨模型委托规则
-    ├── execution-flow.md          # 完整执行链路定义
-    └── workflows/                 # 多模型协作 workflow
-        ├── workflow-protocol.md   # 文件交互协议（步骤化、迭代、状态机）
-        ├── code-review.workflow.md    # 代码审查 5 步流程
-        ├── performance.workflow.md    # 性能诊断 4 步流程
-        └── architecture.workflow.md   # 架构设计 6 步流程
+│
+└── runtime/                  # AI运行机制（轻量）
 ```
 
 ---
 
-## 运行架构
+# 核心设计原则
 
-```
-用户输入
-    ↓
-[Context Loader]      ← 加载 CLAUDE.md + 项目上下文
-    ↓
-[Registry 引擎]       ← 查 registry.json 匹配 skill / rule / agent
-    ↓
-[Skill Matcher]       ← 按 skill-map.md 匹配
-    ↓
-[Agent Selector]      ← 按 agent-routing.md 选择 + 复杂度自评
-    ↓
-    ├── 当前模型胜任 → [Execution Engine] → 结构化输出
-    │
-    └── 超出能力范围 → [Workflow Dispatcher]
-                         ↓
-                    创建 workflow 文件到 runtime/workflows/active/
-                         ↓
-                    另一模型会话领取执行 → 写回结果 → 继续
+## 1. CLAUDE.md 只做入口
+
+CLAUDE.md：
+
+- 不写完整规范
+- 不写详细架构
+- 不写 workflow 全文
+- 不写长篇说明
+
+它只负责：
+
+- 项目身份
+- workspace 定位
+- 规则加载入口
+- 搜索约束
+- build/run 命令
+
+本质：
+
+> CLAUDE.md = AI 工作区入口
+
+---
+
+## 2. Rules = 强约束
+
+Rules 用于定义：
+
+- 必须遵守的规则
+- 禁止行为
+- 分层约束
+- SQL 约束
+- 事务约束
+
+特点：
+
+- 短
+- 明确
+- 不解释
+- 不教程化
+
+示例：
+
+```md
+- Service 不返回 Entity
+- 禁止 select *
+- 库存扣减必须事务
 ```
 
 ---
 
-## 核心文件
+## 3. Skills = 固定问题解决流程
+
+Skill 本质：
+
+> 工程经验流程化
+
+适合：
+
+- SQL优化
+- 并发检查
+- 重复提交
+- 库存一致性
+- 死锁分析
+
+Skill 应包含：
+
+- Trigger
+- Checklist
+- Common Fix
+- Forbidden
+
+Skill 不应该包含：
+
+- 项目背景
+- Prompt语言
+- 长篇解释
+
+---
+
+## 4. Context = 项目世界观
+
+Context 用于告诉 AI：
+
+- 项目是什么
+- 技术栈是什么
+- 架构是什么
+- 核心模块是什么
+
+Context 不写：
+
+- 实现细节
+- Skill
+- Workflow
+
+---
+
+## 5. Context-Map = AI 路由器
+
+context-map.md 用于：
+
+> 任务 → 规则映射
+
+示例：
+
+```md
+库存相关：
+  -> skills/stock-consistency.md
+  -> core/rules/concurrency.md
+
+复杂SQL：
+  -> core/skills/sql/
+```
+
+作用：
+
+- 避免 AI 全量扫描
+- 提高规则命中率
+- 降低 token 消耗
+
+---
+
+## 6. Standards = 元规范（非常重要）
+
+Standards 用于：
+
+> 规范 AI 如何生成 AI 文件
+
+包含：
+
+```text
+core/standards/
+  md-writing.md
+  rules-writing.md
+  skills-writing.md
+  context-writing.md
+  anti-patterns.md
+```
+
+这是整个系统最重要的部分之一。
+
+因为：
+
+> AI 最大的问题不是不会写，而是不知道什么内容应该以什么形式存在。
+
+---
+
+# 推荐文件职责
 
 | 文件 | 作用 |
-|------|------|
-| `core/registry.json` | 全局索引，所有 skill/rule/agent/workflow 在此注册 |
-| `runtime/skill-map.md` | 用户输入 → 匹配哪个 skill |
-| `runtime/agent-routing.md` | 什么场景用哪个 agent + 何时委托另一模型 |
-| `runtime/execution-flow.md` | 完整执行流程定义 |
-| `runtime/workflows/workflow-protocol.md` | 多模型文件交互协议 |
-| `runtime/workflows/*.workflow.md` | 各类型 workflow 详细模板 |
+|---|---|
+| CLAUDE.md | AI入口 |
+| standards | AI如何写文件 |
+| rules | 强约束 |
+| skills | 问题解决流程 |
+| context | 项目世界观 |
+| context-map | AI路由 |
+| agents | AI风格 |
+| workflows | 多模型协作 |
+| runtime | AI运行机制 |
 
 ---
 
-## 维护说明
+# 推荐工作流
 
-### 新增一条规则
+## 日常开发
 
-1. 创建 `.md` 文件到对应目录（`core/rules/` 或 `projects/*/rules/`）
-2. 在 `core/registry.json` 的 `"rules"` 中注册路径
-
-### 新增一个技能
-
-1. 创建技能 `.md` 文件到 `core/skills/` 或 `projects/*/skills/`
-2. 在 `core/registry.json` 的 `"skills"` 中注册
-3. 在 `runtime/skill-map.md` 中添加匹配规则
-
-### 新增一个 Agent
-
-1. 创建 Agent 定义文件到 `core/agents/`
-2. 在 `core/registry.json` 的 `"agents"` 中注册
-3. 在 `runtime/agent-routing.md` 中添加路由规则
-
-### 新增一个 Workflow
-
-1. 在 `runtime/workflows/` 下创建 `{name}.workflow.md`
-2. 结构参照 `workflow-protocol.md`：定义参与者（哪些模型）、步骤（每步谁执行）、输出格式
-3. 在 `core/registry.json` 的 `"workflows"` 中注册
-4. 在 `agent-routing.md` 的"规则 4: Workflow 触发条件"中添加触发规则
-5. 在对应项目的 `CLAUDE.md` 的"多模型协作"章节中引用新 workflow
-
-### 新增一个模型
-
-1. 在 `core/registry.json` 的 `"models"` 中注册新模型
-2. 在 `core/agents/` 中创建对应的 Agent 定义文件（如需要）
-3. 在 `core/skills/general/model-switch.md` 中添加启动方式
-4. 在 `runtime/agent-routing.md` 的 Agent 矩阵中添加新模型变体
-5. 在 `runtime/agent-routing.md` 的复杂度自评规则中添加新模型的自评标准
+```text
+需求
+↓
+AI读取 CLAUDE.md
+↓
+按需加载 rules / skills
+↓
+生成代码
+↓
+人类 review
+```
 
 ---
 
-## 使用规则
+## 复杂问题
 
-1. **禁止跨域扫描** — 处理后端问题只读 `core/` + `projects/webapi/`，不读 `pda/`
-2. **禁止全项目 \*.cs grep** — 优先从 Controller 定位 Service，再定位 Repository
-3. **优先查 skill 和 workflow** — 常见问题有标准排查流程
-4. **Flash 先做，Pro 后审** — 遇到复杂问题主动创建 workflow 委托，不硬撑
-5. **Workflow 文件即协议** — 所有模型间交互通过 `runtime/workflows/` 下的文件，不依赖外部工具
+```text
+需求
+↓
+context-map 定位规则
+↓
+加载对应 skill
+↓
+分析/生成
+↓
+必要时 workflow 协作
+```
+
+---
+
+# 推荐原则
+
+## 只抽高频问题为 Skill
+
+不要什么都抽 skill。
+
+只有：
+
+- 高频
+- 容易出错
+- 跨项目复用
+
+才值得沉淀。
+
+---
+
+## 只把跨项目规则放 core
+
+项目特殊逻辑：
+
+```text
+projects/webapi/
+```
+
+全局规则：
+
+```text
+core/rules/
+```
+
+---
+
+## 避免过度工程化
+
+不要：
+
+- 无限扩 workflow
+- 无限拆 agent
+- 无限写 prompt
+- 无限抽象
+
+目标不是：
+
+> 做 AI 框架
+
+而是：
+
+> 让 AI 稳定辅助真实开发
+
+---
+
+# Anti-Patterns（必须避免）
+
+禁止：
+
+- CLAUDE.md 超长
+- rules 写成教程
+- skills 写成项目介绍
+- workflow 写成论文
+- 一个 md 同时包含 rule + skill + context
+- 全量扫描 ai-lab
+- 无限制沉淀无价值知识
+
+---
+
+# 最终目标
+
+最终希望达到：
+
+```text
+需求
+↓
+AI 自动定位相关规则
+↓
+按需读取技能
+↓
+稳定生成代码
+↓
+人类 review
+```
+
+而不是：
+
+```text
+无限Prompt
+无限上下文
+无限长Markdown
+```
+
+---
+
+# 一句话总结
+
+- CLAUDE.md = AI入口
+- rules = 强约束
+- skills = 解决流程
+- context = 项目世界观
+- standards = 规范AI如何写规范
+
+核心目标：
+
+> 让 AI 工程体系长期可维护，而不是越来越乱。
+

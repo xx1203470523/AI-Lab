@@ -7,7 +7,6 @@
     "sql_index_check": "core/skills/sql/index-check.md",
     "dotnet_service_review": "core/skills/code-review/dotnet-service.md",
     "bug_analysis": "core/skills/general/bug-analysis.md",
-    "model_switch": "core/skills/general/model-switch.md",
     "repeat_submit_check": "projects/wms/skills/repeat-submit-check.md",
     "stock_consistency": "projects/wms/skills/stock-consistency.md",
     "pda_sync_check": "projects/wms/skills/pda-sync-check.md",
@@ -65,5 +64,13 @@
     "debug": "core/prompts/debug.md",
     "refactor": "core/prompts/refactor.md",
     "analyze_performance": "core/prompts/analyze-performance.md"
+  },
+
+  "standards": {
+    "md_writing": "core/standards/md-writing.md",
+    "rules_writing": "core/standards/rules-writing.md",
+    "skills_writing": "core/standards/skills-writing.md",
+    "context_writing": "core/standards/context-writing.md",
+    "anti_patterns": "core/standards/anti-patterns.md"
   }
 }

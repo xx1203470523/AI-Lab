@@ -1,21 +1,39 @@
 # 库存一致性检查
 
-## 适用场景
+## Trigger
+
 - 出库扣库存
 - 入库加库存
 - 调拨转移库存
 - 盘点调整
 
-## 检查点
-1. **乐观锁** — 更新库存时使用 `WHERE quantity >= required` 条件
-2. **事务** — 库存变更 + 交易记录在同一事务内
-3. **日志** — 每次库存变更记录操作人、时间、变更前后值
-4. **对账** — 定期库存快照与交易流水比对
+## Goal
 
-## 典型 SQL
+防止：
+
+- 超卖（扣减超过实际库存）
+- 库存数据与交易记录不一致
+- 并发扣减导致负数库存
+
+## Checklist
+
+- [ ] 更新库存是否用条件更新（`WHERE quantity >= required`）
+- [ ] 库存变更与交易记录是否在同一事务
+- [ ] 是否记录操作人、时间、变更前后值
+- [ ] 扣减前是否加行锁或使用乐观锁
+
+## Common Fix
+
 ```sql
 UPDATE warehouse_stock
 SET quantity = quantity - @pickQty
 WHERE id = @stockId AND quantity >= @pickQty;
 ```
-影响行数为 0 则库存不足，抛异常回滚事务。
+影响行数为 0 → 库存不足，抛异常回滚。
+
+## Forbidden
+
+- 禁止无事务的库存变更
+- 禁止不加 WHERE 条件直接 UPDATE 库存
+- 禁止先查后改不加锁（TOCTOU 问题）
+- 禁止库存扣减在事务外执行

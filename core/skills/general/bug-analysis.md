@@ -1,22 +1,32 @@
-# Bug 分析技能
+# Bug 分析
 
-## 通用排查流程
-1. **复现路径** — 确定触发条件（输入数据、操作步骤、环境）
-2. **日志定位** — 查 NLog 日志（`Admin.WebApi/NLog.config`），找异常堆栈
-3. **数据追溯** — 查数据库确认数据状态是否符合预期
-4. **代码走读** — 从 Controller 到 Service 到 Repository 逐层检查
-5. **边界条件** — 空值、并发、状态冲突、大数量
+## Trigger
 
-## 常见 Bug 模式
+- 生产环境报错
+- 数据状态异常
+- 接口返回不符合预期
 
-### 空引用
-- Min()/Max() 在空集合上抛 `InvalidOperationException`
-- 修复：使用前 `.Count > 0` 判断
+## Goal
 
-### 并发状态冲突
-- 两个请求同时修改同一条记录的状态
-- 修复：乐观锁或分布式锁
+快速定位根因，避免反复试错。
 
-### 数据权限遗漏
-- 查询未过滤站点 (`SiteCode`)
-- 修复：Repository 层默认加 `DataPermission` 过滤
+## Checklist
+
+- [ ] 复现路径 — 输入数据、操作步骤、环境
+- [ ] 日志定位 — NLog 日志找异常堆栈
+- [ ] 数据追溯 — 数据库确认数据状态
+- [ ] 代码走读 — Controller → Service → Repository 逐层
+- [ ] 边界条件 — 空值、并发、状态冲突、大数量
+
+## Common Fix
+
+1. 空引用 — Min/Max 前判 `.Count > 0`
+2. 并发状态冲突 — 乐观锁或分布式锁
+3. 数据权限遗漏 — Repository 层默认加 SiteCode 过滤
+4. SqlSugar `.FirstAsync()` 无记录返回 null，不是抛异常
+
+## Forbidden
+
+- 禁止不查日志直接改代码
+- 禁止不确认数据状态就下结论
+- 禁止只修表面不复现验证
