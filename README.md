@@ -1,16 +1,49 @@
-# AI-Lab 工程化结构说明
+# AI-Lab
 
-本目录用于统一管理 AI Coding 的：
+AI-Lab 用于管理 AI Coding 的项目上下文、工程规则与问题解决经验。
 
-- 全局规则（Rules）
-- 问题解决流程（Skills）
-- 项目上下文（Context）
-- AI 文件生成规范（Standards）
-- 多模型协作（Workflow）
+目标不是“控制 AI”。
 
-目标：
+而是：
 
-> 让 AI 在不同项目中稳定工作，而不是无限生成混乱 Prompt 与 Markdown。
+> 帮助 AI 更快理解项目，减少无效搜索与低质量输出。
+
+---
+
+# 核心理念
+
+现代 AI（Claude / GPT / DeepSeek 等）已经具备较强代码能力。
+
+工程化重点不再是：
+
+- 教 AI 怎么写代码
+- 给 AI 无限 Prompt
+- 设计复杂 Agent Workflow
+
+而是：
+
+- 提供项目上下文
+- 提供业务链路
+- 提供真实踩坑经验
+- 降低搜索成本
+- 提高定位效率
+
+AI 缺少的不是“编码能力”。
+
+而是：
+
+- 项目知识
+- 数据流向
+- 文件位置
+- 业务约束
+- 历史坑点
+
+因此：
+
+```text
+AI-Lab = 项目知识索引系统
+而不是 AI 管理系统
+```
 
 ---
 
@@ -19,195 +52,188 @@
 ```text
 ai-lab/
 │
-├── core/                     # 全局通用能力（跨项目）
+├── core/                         # 跨项目通用能力
 │
-│   ├── standards/            # ⭐ 元规范（规范AI如何写AI文件）
-│   ├── rules/                # 强约束
-│   ├── skills/               # 问题解决流程
-│   ├── agents/               # AI角色风格（可选）
-│   └── workflows/            # 多模型协作（可选）
+│   ├── rules/                    # 通用强约束
+│   ├── skills/                   # 通用问题解决流程
+│   └── standards/                # AI 文件生成规范（可选）
 │
-│
-├── projects/                 # 项目级上下文
+├── projects/                     # 项目级上下文
 │
 │   ├── webapi/
-│   │   ├── CLAUDE.md
-│   │   ├── context.md
-│   │   ├── context-map.md
-│   │   ├── rules/
-│   │   ├── skills/
-│   │   └── architecture/
+│   │   ├── CLAUDE.md             # 项目入口
+│   │   ├── context-map.md        # 任务 → 上下文索引
+│   │   │
+│   │   ├── quick-ref/            # 高价值业务速查（核心）
+│   │   │   ├── data-flows.md
+│   │   │   ├── entity-map.md
+│   │   │   └── fk-chains.md
+│   │   │
+│   │   ├── rules/                # 项目特定约束
+│   │   └── skills/               # 项目特定问题流程
 │   │
+│   ├── wms/
 │   ├── pda/
 │   └── wmsweb/
 │
-│
-└── runtime/                  # AI运行机制（轻量）
+└── runtime/                      # 轻量运行辅助（可选）
+    └── workflows/
 ```
 
 ---
 
-# 核心设计原则
+# 文件职责
+
+| 文件        | 作用               |
+| ----------- | ------------------ |
+| CLAUDE.md   | 项目入口           |
+| context-map | 任务 → 上下文路由  |
+| quick-ref   | 项目知识速查       |
+| rules       | AI 易踩坑约束      |
+| skills      | 高频问题解决流程   |
+| standards   | AI 文件规范        |
+| workflows   | 多模型协作（可选） |
+
+---
+
+# 设计原则
 
 ## 1. CLAUDE.md 只做入口
 
-CLAUDE.md：
+CLAUDE.md 不写大而全规范。
 
-- 不写完整规范
-- 不写详细架构
-- 不写 workflow 全文
-- 不写长篇说明
-
-它只负责：
+只保留：
 
 - 项目身份
-- workspace 定位
-- 规则加载入口
-- 搜索约束
-- build/run 命令
+- build/run/test 命令
+- context-map 入口
+- quick-ref 索引
+- 少量关键约束
 
 本质：
 
-> CLAUDE.md = AI 工作区入口
-
----
-
-## 2. Rules = 强约束
-
-Rules 用于定义：
-
-- 必须遵守的规则
-- 禁止行为
-- 分层约束
-- SQL 约束
-- 事务约束
-
-特点：
-
-- 短
-- 明确
-- 不解释
-- 不教程化
-
-示例：
-
-```md
-- Service 不返回 Entity
-- 禁止 select *
-- 库存扣减必须事务
+```text
+CLAUDE.md = AI 进入项目后的导航页
 ```
 
----
-
-## 3. Skills = 固定问题解决流程
-
-Skill 本质：
-
-> 工程经验流程化
-
-适合：
-
-- SQL优化
-- 并发检查
-- 重复提交
-- 库存一致性
-- 死锁分析
-
-Skill 应包含：
-
-- Trigger
-- Checklist
-- Common Fix
-- Forbidden
-
-Skill 不应该包含：
-
-- 项目背景
-- Prompt语言
-- 长篇解释
-
----
-
-## 4. Context = 项目世界观
-
-Context 用于告诉 AI：
-
-- 项目是什么
-- 技术栈是什么
-- 架构是什么
-- 核心模块是什么
-
-Context 不写：
-
-- 实现细节
-- Skill
-- Workflow
-
----
-
-## 5. Context-Map = AI 路由器
-
-context-map.md 用于：
-
-> 任务 → 规则映射
-
-示例：
-
-```md
-库存相关：
-  -> skills/stock-consistency.md
-  -> core/rules/concurrency.md
-
-复杂SQL：
-  -> core/skills/sql/
-```
-
-作用：
-
-- 避免 AI 全量扫描
-- 提高规则命中率
-- 降低 token 消耗
-
----
-
-## 6. Standards = 元规范（非常重要）
-
-Standards 用于：
-
-> 规范 AI 如何生成 AI 文件
-
-包含：
+不是：
 
 ```text
-core/standards/
-  md-writing.md
-  rules-writing.md
-  skills-writing.md
-  context-writing.md
-  anti-patterns.md
+AI 行为管理条例
 ```
-
-这是整个系统最重要的部分之一。
-
-因为：
-
-> AI 最大的问题不是不会写，而是不知道什么内容应该以什么形式存在。
 
 ---
 
-# 推荐文件职责
+## 2. Quick-Ref 是核心
 
-| 文件 | 作用 |
-|---|---|
-| CLAUDE.md | AI入口 |
-| standards | AI如何写文件 |
-| rules | 强约束 |
-| skills | 问题解决流程 |
-| context | 项目世界观 |
-| context-map | AI路由 |
-| agents | AI风格 |
-| workflows | 多模型协作 |
-| runtime | AI运行机制 |
+AI 最缺的不是编码能力。
+
+而是：
+
+```text
+东西在哪
+数据怎么流
+字段从哪里来
+改哪里会影响什么
+```
+
+quick-ref 用于解决这些问题。
+
+例如：
+
+| 文件              | 用途           |
+| ----------------- | -------------- |
+| data-flows.md     | 数据链路       |
+| entity-map.md     | 功能与实体映射 |
+| fk-chains.md      | 表关联关系     |
+| business-links.md | 业务调用链     |
+
+---
+
+## 3. Rules 只保留“真实坑点”
+
+Rules 不写教程。
+
+只记录：
+
+```text
+AI 无法从训练数据得知
+且容易踩坑
+```
+
+例如：
+
+```md
+- quantity 扣减必须条件更新
+- SnapshotEntity 更新后必须调用 AfterUpdate
+- namespace 必须以实际声明为准
+- 禁止直接更新库存快照表
+```
+
+不要写：
+
+```md
+- Controller 放 Controllers
+- Service 使用依赖注入
+```
+
+这些属于 AI 已知知识。
+
+---
+
+## 4. Skills 只沉淀高价值流程
+
+Skill 是：
+
+```text
+高频
+复杂
+容易遗漏
+跨项目复用
+```
+
+的问题解决经验。
+
+适合 Skill 的内容：
+
+- SQL 调优
+- 死锁分析
+- 库存一致性
+- PDA 重复提交
+- 并发问题排查
+
+不适合：
+
+- 新增 Controller
+- 新增 DTO
+- 基础 CRUD
+
+---
+
+## 5. Context-Map 用于减少搜索成本
+
+context-map 不负责“控制 AI”。
+
+只负责：
+
+```text
+任务 → 推荐阅读内容
+```
+
+例如：
+
+```text
+库存扣减问题
+→ inventory rules
+→ inventory consistency skill
+→ fk-chains
+```
+
+目标：
+
+- 减少无效搜索
+- 提高上下文命中率
+- 降低 token 消耗
 
 ---
 
@@ -218,9 +244,11 @@ core/standards/
 ```text
 需求
 ↓
-AI读取 CLAUDE.md
+读取 CLAUDE.md
 ↓
-按需加载 rules / skills
+查看 context-map
+↓
+按需读取 rules / quick-ref / skills
 ↓
 生成代码
 ↓
@@ -234,46 +262,43 @@ AI读取 CLAUDE.md
 ```text
 需求
 ↓
-context-map 定位规则
+定位 skill
 ↓
-加载对应 skill
+分析问题
 ↓
-分析/生成
+必要时查看 quick-ref
 ↓
-必要时 workflow 协作
+生成修复方案
+↓
+review
 ```
 
 ---
 
-# 推荐原则
+# 推荐实践
 
-## 只抽高频问题为 Skill
+## 优先沉淀“项目知识”
 
-不要什么都抽 skill。
+优先级：
 
-只有：
-
-- 高频
-- 容易出错
-- 跨项目复用
-
-才值得沉淀。
+```text
+项目链路 > AI Prompt
+业务知识 > 通用规范
+文件定位 > 编码模板
+```
 
 ---
 
-## 只把跨项目规则放 core
+## 减少通用规范
 
-项目特殊逻辑：
+AI 本身已经知道：
 
-```text
-projects/webapi/
-```
+- Controller 怎么写
+- Service 怎么分层
+- DI 怎么注册
+- Repository 怎么调用
 
-全局规则：
-
-```text
-core/rules/
-```
+不要重复沉淀这些内容。
 
 ---
 
@@ -281,45 +306,49 @@ core/rules/
 
 不要：
 
-- 无限扩 workflow
-- 无限拆 agent
-- 无限写 prompt
-- 无限抽象
+- 无限拆 Agent
+- 无限 Workflow
+- 无限 Prompt
+- 无限规则
+- 无限自动化
 
 目标不是：
 
-> 做 AI 框架
+```text
+做一个 AI 操作系统
+```
 
 而是：
 
-> 让 AI 稳定辅助真实开发
+```text
+让 AI 能稳定辅助真实开发
+```
 
 ---
 
-# Anti-Patterns（必须避免）
+# Anti-Patterns
 
-禁止：
+避免：
 
 - CLAUDE.md 超长
 - rules 写成教程
 - skills 写成项目介绍
-- workflow 写成论文
-- 一个 md 同时包含 rule + skill + context
-- 全量扫描 ai-lab
-- 无限制沉淀无价值知识
+- workflow 复杂化
+- 一个文件混合 rule + context + skill
+- 全量扫描整个 ai-lab
+- 沉淀 AI 已知的通用知识
+- 无限制积累低价值 Markdown
 
 ---
 
 # 最终目标
 
-最终希望达到：
-
 ```text
 需求
 ↓
-AI 自动定位相关规则
+AI 快速定位相关上下文
 ↓
-按需读取技能
+按需读取项目知识
 ↓
 稳定生成代码
 ↓
@@ -329,22 +358,21 @@ AI 自动定位相关规则
 而不是：
 
 ```text
-无限Prompt
-无限上下文
-无限长Markdown
+加载大量规则
+↓
+自由发挥
+↓
+输出不稳定
 ```
 
 ---
 
 # 一句话总结
 
-- CLAUDE.md = AI入口
-- rules = 强约束
-- skills = 解决流程
-- context = 项目世界观
-- standards = 规范AI如何写规范
+```text
+AI-Lab 的目标：
 
-核心目标：
+不是教 AI 写代码。
 
-> 让 AI 工程体系长期可维护，而不是越来越乱。
-
+而是帮助 AI 更快理解项目。
+```

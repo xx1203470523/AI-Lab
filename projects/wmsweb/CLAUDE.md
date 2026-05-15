@@ -6,33 +6,33 @@
 
 ## 目录结构
 
-| 目录 | 说明 |
-|------|------|
-| `src/views/` | 页面视图，按业务模块分（instock/outstock/onstock/stock） |
-| `src/api/` | API 接口封装，按模块分，与 views 对应 |
-| `src/store/modules/` | Pinia 状态管理 |
-| `src/router/` | 路由配置 |
-| `src/components/` | 通用组件 |
-| `src/composition/` | 组合式函数 (Composables) |
-| `src/utils/` | 工具函数 |
-| `src/enums/` | 枚举常量 |
-| `src/directive/` | 自定义指令 |
-| `src/plugins/` | 插件注册 |
-| `src/layout/` | 布局组件 |
+| 目录                 | 说明                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `src/views/`         | 页面视图，按业务模块分（instock/outstock/onstock/stock） |
+| `src/api/`           | API 接口封装，按模块分，与 views 对应                    |
+| `src/store/modules/` | Pinia 状态管理                                           |
+| `src/router/`        | 路由配置                                                 |
+| `src/components/`    | 通用组件                                                 |
+| `src/composition/`   | 组合式函数 (Composables)                                 |
+| `src/utils/`         | 工具函数                                                 |
+| `src/enums/`         | 枚举常量                                                 |
+| `src/directive/`     | 自定义指令                                               |
+| `src/plugins/`       | 插件注册                                                 |
+| `src/layout/`        | 布局组件                                                 |
 
 ## 业务模块
 
-| 模块 | views 目录 | API 目录 | 说明 |
-|------|-----------|----------|------|
-| 入库 | `views/instock/` | `api/instock/` | ASN → 收货 → 分选 → 上架 |
-| 出库 | `views/outstock/` | `api/outstock/` | 拣料 → 配送 → 发货 |
-| 在库 | `views/onstock/` | `api/onstock/` | 调拨、移库、转换、盲盘 |
-| 库存 | `views/stock-transformation/` | `api/stock-transformation/` | 库存查询、交易、标签 |
-| 报表 | `views/reports/` | `api/reports/` | 入库/出库/库存等报表 |
-| 系统 | `views/system/` | `api/system/` | 用户、角色、菜单、字典 |
-| 质检 | `views/quality/` | `api/quality/` | 质检管理 |
-| 看板 | `views/kanban/` | `api/kanban/` | 看板展示 |
-| 物流 | `views/logistics/` | `api/logistics/` | 物流管理 |
+| 模块 | views 目录                    | API 目录                    | 说明                     |
+| ---- | ----------------------------- | --------------------------- | ------------------------ |
+| 入库 | `views/instock/`              | `api/instock/`              | ASN → 收货 → 分选 → 上架 |
+| 出库 | `views/outstock/`             | `api/outstock/`             | 拣料 → 配送 → 发货       |
+| 在库 | `views/onstock/`              | `api/onstock/`              | 调拨、移库、转换、盲盘   |
+| 库存 | `views/stock-transformation/` | `api/stock-transformation/` | 库存查询、交易、标签     |
+| 报表 | `views/reports/`              | `api/reports/`              | 入库/出库/库存等报表     |
+| 系统 | `views/system/`               | `api/system/`               | 用户、角色、菜单、字典   |
+| 质检 | `views/quality/`              | `api/quality/`              | 质检管理                 |
+| 看板 | `views/kanban/`               | `api/kanban/`               | 看板展示                 |
+| 物流 | `views/logistics/`            | `api/logistics/`            | 物流管理                 |
 
 ## 开发命令
 
@@ -52,26 +52,46 @@ pnpm lint:eslint  # ESLint 检查
 - 枚举值统一在 `src/enums/` 定义，避免魔法数字
 - 通用逻辑抽取到 `src/composition/` composables
 
-## 关联规则
+## 页面规范（本仓库规则）
 
-| 规则 | 路径 | 适用场景 |
-|------|------|----------|
-| 架构分层规范 | `core/rules/architecture.md` | 理解后端架构依赖 |
-| API 设计规范 | `core/rules/api-design.md` | 对接后端接口约定 |
-| 并发安全规范 | `core/rules/concurrency.md` | 分布式锁、防重复提交 |
+| 规则         | 路径                         | 说明                              |
+| ------------ | ---------------------------- | --------------------------------- |
+| 页面结构规范 | `rules/page-structure.md`    | 目录组织、路由、文件命名          |
+| API 调用规范 | `rules/api-layer.md`         | 请求方法、响应处理、参数约定      |
+| 组件模式规范 | `rules/component-pattern.md` | 新架构 vs 传统模式、列表/弹窗约定 |
+| 状态管理规范 | `rules/state-management.md`  | Pinia store、权限控制、事件通信   |
+
+## 技能（本仓库问题流程）
+
+| 技能         | 路径                  | 说明                   |
+| ------------ | --------------------- | ---------------------- |
+| 新建业务页面 | `skills/new-page.md`  | 从路由到视图的完整流程 |
+| API 调试     | `skills/api-debug.md` | 接口问题排查流程       |
+
+## 关联规则（跨项目）
+
+| 规则         | 路径                                 | 适用场景               |
+| ------------ | ------------------------------------ | ---------------------- |
+| 架构分层规范 | `core/rules/architecture.md`         | 理解后端架构依赖       |
+| API 设计规范 | `core/rules/api-design.md`           | 对接后端接口约定       |
+| 并发安全规范 | `core/rules/concurrency.md`          | 分布式锁、防重复提交   |
 | WMS 业务规范 | `projects/wms/rules/wms-business.md` | 入库/出库/库存业务规则 |
 
-## 关联技能
+## 关联技能（跨项目）
 
-| 技能 | 路径 | 说明 |
-|------|------|------|
-| 防重复提交检查 | `projects/wms/skills/repeat-submit-check.md` | PDA 场景防重 |
-| 库存一致性检查 | `projects/wms/skills/stock-consistency.md` | 库存扣减校验 |
-| PDA 数据同步检查 | `projects/wms/skills/pda-sync-check.md` | PDA ↔ Web 数据一致性 |
+| 技能             | 路径                                         | 说明                 |
+| ---------------- | -------------------------------------------- | -------------------- |
+| 防重复提交检查   | `projects/wms/skills/repeat-submit-check.md` | PDA 场景防重         |
+| 库存一致性检查   | `projects/wms/skills/stock-consistency.md`   | 库存扣减校验         |
+| PDA 数据同步检查 | `projects/wms/skills/pda-sync-check.md`      | PDA ↔ Web 数据一致性 |
 
 ## 领域上下文
 
 参见 `projects/wms/context.md` 获取 WMS 完整模块概览和技术栈信息。
+
+## 上下文路由
+
+参见 `context-map.md` 按任务类型快速定位规则/技能。
 
 ## Agent 路由
 
