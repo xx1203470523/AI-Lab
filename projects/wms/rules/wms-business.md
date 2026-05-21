@@ -1,30 +1,31 @@
 # WMS 业务规范
 
-## 入库流程
+> 只记录代码看不出来的决策和规则。实体链路、文件路径去 `projects/webapi/quick-ref/` 找。
 
-ASN 预到货通知 → ARN 预收货通知 → 收货确认 → 分选（可选）→ 上架
-退货走 ARN（Advance Return Notice）。
+## 入库
 
-## 出库流程
+- 退货走 ARN（Advance Return Notice），不走 ASN
 
-拣料单生成 → PDA 拣料 → 配送 → 发货确认
-配送涉及交接（HandOver）和签收。
+## SN 序列号管控
 
-## 库存核心规则
+- `BaseMaterial.IsSerialNumberControl == "1"` 的物料，收货标签 `Sn` 必须有值，否则阻断
+- 校验入口：`AutoPostServicePartial.cs` → `GenerateInStockReceiptLabelsAsync()`
+- 已废弃字段：`InStockReceiptDetail.MaterialNo` / `InStockReceiptDetail.Sn` → 改用 `MaterialCode` / `BaseMaterialPrintcenter.Sn`
 
-- 库存扣减使用条件更新 `UPDATE ... WHERE quantity >= required`
-- 库存交易记录每笔操作都生成明细
-- 库存标签用于批次/SN 追溯
-
-## PDA 特殊规则
+## PDA
 
 - 防重复提交：前端按钮置灰 + 后端分布式锁兜底
 - 离线容错：关键操作需在信号恢复后同步确认
 
+## 质检判定
+
+- 判定合格/不合格的依据是 **T100 qcbc012（判定区分）**，不是 qcbc002
+- qcbc002 仅保留用于 QualityStatus 细分（如 qcbc002="01"→special）和仓库指定
+- 合格：1-良品 / 2-不良品入库 / 3-报废入库
+- 不合格：4-验退 / 5-PQC破坏性检验下线 / 6-转回当站在制 / 7-转回当站报废
+- 分组常量: `EQualJudgmentGroup` (Domain.Shared/Constants/)
+
 ## 立库同步
 
-- 入库同步快照：`InStockUpShelvesSyncSnapshaotService`（基类 `BaseThreeLayerSyncSnapshotService`）
-- 立库仓库过滤：`BaseWarehouse.Group == GroupKeyConst.WarehouseAutomation`
-- 上架单同步仅包含立库明细对应的上架单，且 `UpStatus != 1`
-- 同步回传入口：`InStockUpShelvesSyncController` (AutomationWarehouse)
-- 数据链和 FK 详见：`projects/webapi/quick-ref/`
+- 只有立库仓库组 (`GroupKeyConst.WarehouseAutomation`) 的明细对应的上架单才进入同步
+- 上架单 `UpStatus != 1`（未完成上架）才同步

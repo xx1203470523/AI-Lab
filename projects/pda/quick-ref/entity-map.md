@@ -10,6 +10,7 @@
 | ASN 预到货 | `pages/receipt/*` | `api/instock/asn.js` | `InStockAsnController` |
 | ARN 预收货 | `pages/receipt/*` | `api/instock/arn.js` | `InstockArnHeadController` |
 | 上架单 | `pages/putaway/*` | `api/instock/on.js` | `InStockUpShelvesController` |
+| 上架单-修改过账日期 | `pages/putaway/operation/index.nvue` | `api/instock/on.js` → `updatePostDateAsync()` | `InStockUpShelvesController` → `updatePostDate` |
 | 紧急上架 | `pages/on/*` | `api/instock/receipt.js` (emergencyOn) | `InstockReceiptController` |
 
 ## 出库 (Pick/Shipment)

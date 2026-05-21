@@ -15,6 +15,28 @@
 | 调拨过账通知 | `OnStockAllot` | — | `OnStockAllotNoticeService` |
 | 分选单 | `InStockSortingHead` | `InStockSortingController` | — |
 | 质检单 | `QualChecklist` | `QualChecklistController` | — |
+| 一键入库 | — | `InStockUpShelvesController` | `AutoPostService` |
+| 物料标签 | `BaseMaterialPrintcenter` | — | — |
+
+### 质检实体链
+
+```
+QualChecklist (质检单)
+  → QualChecklistDetail (质检明细)
+    → QualCheckListLabel (质检标签, ChecklistDetailId → QualChecklistDetail.Id)
+    → QualCheckListDetailPiece (检验分项, ChecklistDetailId → QualChecklistDetail.Id)
+    → QualChecklistDetailCheck (检验结果, ChecklistDetailId → QualChecklistDetail.Id)
+    → QualChecklistDetailUnqualified (不良信息, ChecklistDetailCheckId → QualChecklistDetailCheck.Id)
+BaseMaterialPrintcenter (入库标签) → 质检后生成 QualCheckListLabel
+```
+
+| 业务对象 | 主实体 | Controller | 核心 Service |
+|----------|--------|------------|-------------|
+| 质检单 | `QualChecklist` | `QualChecklistController` | `QualChecklistService` (Qual/) |
+| 质检明细 | `QualChecklistDetail` | — | — |
+| 检验标签 | `QualCheckListLabel` | — | — |
+| 不良信息 | `QualChecklistDetailUnqualified` | — | — |
+| ERP 质检结果同步 | `ErpIQCResultDto` | — | `ErpIQCResultSyncService` (Sync/) |
 
 ## 出库 (OutStock)
 
