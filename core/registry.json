@@ -1,54 +1,24 @@
 {
   "version": "2.0",
-  "description": "AI 工程化全局索引 — 定义 skill / rule / agent / workflow 的注册与路由",
+  "description": "AI 工程化全局索引 — 定义 skill / rule 的注册与路由",
 
   "skills": {
-    "sql_optimize": "core/skills/sql/optimize.md",
-    "sql_index_check": "core/skills/sql/index-check.md",
-    "dotnet_service_review": "core/skills/code-review/dotnet-service.md",
-    "bug_analysis": "core/skills/general/bug-analysis.md",
-    "repeat_submit_check": "projects/wms/skills/repeat-submit-check.md",
-    "stock_consistency": "projects/wms/skills/stock-consistency.md",
-    "pda_sync_check": "projects/wms/skills/pda-sync-check.md",
-    "new_report": "projects/webapi/skills/new-report.md",
-    "debug_report": "projects/webapi/skills/debug-report.md"
-  },
-
-  "agents": {
-    "reviewer": "core/agents/reviewer.md",
-    "architect": "core/agents/architect.md",
-    "sql_expert": "core/agents/sql-expert.md",
-    "v4pro": "core/agents/v4-pro.md"
-  },
-
-  "models": {
-    "deepseek-v4-flash": {
-      "description": "默认模型，日常开发辅助，快速响应",
-      "agents": ["reviewer", "architect", "sql_expert"],
-      "role": "executor"
-    },
-    "deepseek-v4-pro": {
-      "description": "深度推理模型，代码审查、疑难问题、架构设计",
-      "agents": ["v4pro"],
-      "trigger": "claude --model deepseek-v4-pro",
-      "role": "reviewer"
-    }
-  },
-
-  "workflows": {
-    "protocol": "runtime/workflows/workflow-protocol.md",
-    "code_review": "runtime/workflows/code-review.workflow.md",
-    "performance": "runtime/workflows/performance.workflow.md",
-    "architecture": "runtime/workflows/architecture.workflow.md"
-  },
-
-  "routing": {
-    "agent_routing": "runtime/agent-routing.md",
-    "skill_map": "runtime/skill-map.md",
-    "execution_flow": "runtime/execution-flow.md"
+    "_note": "所有 skill 模板均存放于 ai-lab，不直接装载到真实项目。启用方式：复制到 ~/.claude/skills/（个人启用）或真实项目 .claude/skills/（项目内启用）。",
+    "_layout": "core/.claude/skills/ = 跨栈通用模板；projects/{webapi,wmsweb,pda}/.claude/skills/ = 项目特定模板。",
+    "push": "core/.claude/skills/git-push/SKILL.md",
+    "bug_analysis": "core/.claude/skills/bug-analysis/SKILL.md",
+    "sql_index_check": "core/.claude/skills/sql-index-check/SKILL.md",
+    "sql_optimize": "core/.claude/skills/sql-optimize/SKILL.md",
+    "allot_flow": "projects/webapi/.claude/skills/allot-flow/SKILL.md",
+    "stock_consistency": "projects/webapi/.claude/skills/stock-consistency/SKILL.md",
+    "repeat_submit_check": "projects/webapi/.claude/skills/repeat-submit-check/SKILL.md",
+    "debug_report": "projects/webapi/.claude/skills/debug-report/SKILL.md",
+    "api_debug": "projects/wmsweb/.claude/skills/api-debug/SKILL.md",
+    "pda_sync_check": "projects/pda/.claude/skills/pda-sync-check/SKILL.md"
   },
 
   "rules": {
+    "_note": "rules 不是自动加载机制，靠 .claude/hooks/prompt-rules-router.ps1 按关键词路由触发。",
     "sql": "core/rules/sql.md",
     "api_design": "core/rules/api-design.md",
     "architecture": "core/rules/architecture.md",
@@ -57,20 +27,11 @@
     "domain_layer": "projects/webapi/rules/01-domain-layer.md",
     "service_layer": "projects/webapi/rules/02-service-layer.md",
     "controller_layer": "projects/webapi/rules/03-controller-layer.md",
-    "report_module": "projects/webapi/rules/04-report-module.md"
-  },
-
-  "prompts": {
-    "debug": "core/prompts/debug.md",
-    "refactor": "core/prompts/refactor.md",
-    "analyze_performance": "core/prompts/analyze-performance.md"
-  },
-
-  "standards": {
-    "md_writing": "core/standards/md-writing.md",
-    "rules_writing": "core/standards/rules-writing.md",
-    "skills_writing": "core/standards/skills-writing.md",
-    "context_writing": "core/standards/context-writing.md",
-    "anti_patterns": "core/standards/anti-patterns.md"
+    "report_module": "projects/webapi/rules/04-report-module.md",
+    "page_structure": "projects/wmsweb/rules/page-structure.md",
+    "component_pattern": "projects/wmsweb/rules/component-pattern.md",
+    "api_layer": "projects/wmsweb/rules/api-layer.md",
+    "state_management": "projects/wmsweb/rules/state-management.md",
+    "pda_patterns": "projects/pda/rules/01-pda-patterns.md"
   }
 }

@@ -39,7 +39,7 @@
 1. 当前任务相关代码（`src/` 对应模块）
 2. `../ai-lab/projects/wmsweb/context-map.md`（上下文路由）
 3. `../ai-lab/projects/wmsweb/rules/`（前端页面规范）
-4. `../ai-lab/projects/wmsweb/skills/`（前端问题流程）
+4. 业务流程类技能模板存于 ai-lab `core/.claude/skills/` 与 `projects/{webapi,wmsweb,pda}/.claude/skills/`，启用后凭关键词自动触发
 5. `../ai-lab/projects/wms/`（WMS 业务领域）
 6. `../ai-lab/core/rules/`（全局规范）
 7. `../ai-lab/runtime/workflows/`（仅用户明确要求时）
@@ -49,6 +49,10 @@
 - 禁止全项目扫描 `node_modules/` `dist/`
 - 按业务模块定位：`src/views/{module}/` → `src/api/{module}/` → `src/store/modules/`
 - 枚举值查 `src/enums/`，组件查 `src/components/`，组合式函数查 `src/composition/`
+
+## 执行环境
+
+Shell: **PowerShell**（始终使用 PowerShell 执行命令，不使用 Bash）
 
 ## Build Commands
 

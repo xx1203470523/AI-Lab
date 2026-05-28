@@ -34,6 +34,10 @@
 | 看板 | `views/kanban/`               | `api/kanban/`               | 看板展示                 |
 | 物流 | `views/logistics/`            | `api/logistics/`            | 物流管理                 |
 
+## 执行环境
+
+Shell: **PowerShell**（始终使用 PowerShell 执行命令，不使用 Bash）
+
 ## 开发命令
 
 ```bash
@@ -61,12 +65,14 @@ pnpm lint:eslint  # ESLint 检查
 | 组件模式规范 | `rules/component-pattern.md` | 新架构 vs 传统模式、列表/弹窗约定 |
 | 状态管理规范 | `rules/state-management.md`  | Pinia store、权限控制、事件通信   |
 
-## 技能（本仓库问题流程）
+## 技能（模板存于 ai-lab，启用需复制到 ~/.claude/skills/ 或真实项目 .claude/skills/）
 
-| 技能         | 路径                  | 说明                   |
-| ------------ | --------------------- | ---------------------- |
-| 新建业务页面 | `skills/new-page.md`  | 从路由到视图的完整流程 |
-| API 调试     | `skills/api-debug.md` | 接口问题排查流程       |
+业务流程类技能以 SKILL.md（含 frontmatter）形式存放在 ai-lab，凭关键词稳定触发。模板仅在 ai-lab 维护，使用前需手动复制到启用位置。
+
+| 技能      | ai-lab 模板位置                                   | 触发关键词示例                           |
+| --------- | ------------------------------------------------ | ---------------------------------------- |
+| API 调试  | `projects/wmsweb/.claude/skills/api-debug/SKILL.md` | 接口报错、Network、跨域、proxy、token 过期 |
+| 新增页面  | 真实项目内置 `gen` skill                         | 新增、生成、create、new                  |
 
 ## 关联规则（跨项目）
 
@@ -77,13 +83,15 @@ pnpm lint:eslint  # ESLint 检查
 | 并发安全规范 | `core/rules/concurrency.md`          | 分布式锁、防重复提交   |
 | WMS 业务规范 | `projects/wms/rules/wms-business.md` | 入库/出库/库存业务规则 |
 
-## 关联技能（跨项目）
+## 关联技能（后端模板，启用后凭关键词触发）
 
-| 技能             | 路径                                         | 说明                 |
-| ---------------- | -------------------------------------------- | -------------------- |
-| 防重复提交检查   | `projects/wms/skills/repeat-submit-check.md` | PDA 场景防重         |
-| 库存一致性检查   | `projects/wms/skills/stock-consistency.md`   | 库存扣减校验         |
-| PDA 数据同步检查 | `projects/wms/skills/pda-sync-check.md`      | PDA ↔ Web 数据一致性 |
+下列技能存放于 `projects/webapi/.claude/skills/`，复制到启用位置后才会触发：
+
+| 技能             | 触发关键词示例                           |
+| ---------------- | ---------------------------------------- |
+| 防重复提交检查   | 重复提交、防重复、幂等、分布式锁         |
+| 库存一致性检查   | 库存、扣减、超卖、库存事务               |
+| PDA 数据同步检查 | PDA 同步、数据不同步（在 PDA 项目中触发） |
 
 ## 领域上下文
 

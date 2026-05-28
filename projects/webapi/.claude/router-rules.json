@@ -1,0 +1,30 @@
+{
+  "_comment": "关键词 → 推荐阅读 rules 的映射。hook 通过 $PSScriptRoot 推算 .claude 根，再按 _rule_base 拼绝对路径。复制时必须把 .claude/hooks 和 rules/ 保持相对结构一起搬走。",
+  "_rule_base": "../rules",
+  "groups": [
+    {
+      "name": "domain-layer",
+      "keywords": ["Entity", "实体", "Domain", "TableEntity", "SugarColumn", "FieldLengthConst", "DecimalDigitsConst", "Repository", "仓储", "DataPermissionEntity", "IDeletedFilter"],
+      "paths": ["01-domain-layer.md"],
+      "hint": "命中实体 / Domain 层关键词，建议先读 01-domain-layer.md：扁平命名空间、字段长度常量、废弃字段处理。"
+    },
+    {
+      "name": "service-layer",
+      "keywords": ["Service", "服务层", "AppService", "ELifeTime", "DTO", "PagerQuery", "DisplayName", "ExcelFormat", "WhereIF", "LeftJoin", "InnerJoin", "ToPageAsync", "导出", "Export", "MiniExcel"],
+      "paths": ["02-service-layer.md"],
+      "hint": "命中 Service 层关键词，建议先读 02-service-layer.md：扁平命名空间陷阱、DTO 三件套、导出 Redis 锁、跨库 Join 规范。"
+    },
+    {
+      "name": "controller-layer",
+      "keywords": ["Controller", "控制器", "ActionPermissionFilter", "Route", "ControllerAbstract", "Success(", "ToResponse", "AllowAnonymous", "Log(Title", "OperationType"],
+      "paths": ["03-controller-layer.md"],
+      "hint": "命中 Controller 层关键词，建议先读 03-controller-layer.md：基类 ControllerAbstract、权限格式、全局 using、统一响应封装。"
+    },
+    {
+      "name": "report-module",
+      "keywords": ["报表", "Report", "ReportService", "ReportController", "ExportDto", "FillDetailDataAsync", "InventoryReport", "InStockReport", "OutStockReport", "CheckReport"],
+      "paths": ["04-report-module.md", "02-service-layer.md"],
+      "hint": "命中报表模块关键词，建议先读 04-report-module.md（报表清单 + 数据后处理）和 02-service-layer.md（导出锁规范）。"
+    }
+  ]
+}

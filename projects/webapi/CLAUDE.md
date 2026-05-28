@@ -6,6 +6,10 @@
 - **Stack**: .NET 8 + Furion + SqlSugar + DDD-layered
 - **Scope**: 当前仓库仅负责 WMS 后端，PDA/AdminUI 为独立仓库
 
+## 执行环境
+
+Shell: **PowerShell**（始终使用 PowerShell 执行命令，不使用 Bash）
+
 ## Commands
 
 ```bash

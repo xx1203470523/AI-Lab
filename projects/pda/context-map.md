@@ -17,10 +17,10 @@
 
 | 场景              | 加载文件                                                              |
 | ----------------- | --------------------------------------------------------------------- |
-| PDA Bug 分析      | `core/skills/general/bug-analysis.md`                                 |
+| PDA Bug 分析      | ai-lab 模板 `core/.claude/skills/bug-analysis/`（启用后凭"bug、报错、异常"等触发） |
 | 扫描/PDA 硬件     | `projects/pda/rules/01-pda-patterns.md`（蓝牙/扫描部分）              |
-| 数据不一致        | `projects/pda/quick-ref/data-flows.md` + `projects/wms/skills/stock-consistency.md` |
-| 防重复提交        | `projects/wms/skills/repeat-submit-check.md`                          |
+| 数据不一致        | `projects/pda/quick-ref/data-flows.md`；启用 ai-lab 模板 `pda-sync-check` / `stock-consistency` 后凭关键词触发 |
+| 防重复提交        | ai-lab 模板 `projects/webapi/.claude/skills/repeat-submit-check/`     |
 | 语音/提示异常     | `projects/pda/rules/01-pda-patterns.md`（voice-utils 部分）           |
 | 401/登录态问题    | `projects/pda/rules/01-pda-patterns.md`（request.js 部分）            |
 
@@ -46,7 +46,7 @@
 | ----------------- | --------------------------------------------------------------------- |
 | 调拨流程          | `projects/pda/quick-ref/data-flows.md`（调拨链路）                    |
 | 盘点/盲盘         | `projects/pda/quick-ref/data-flows.md`（盘点链路）                    |
-| 库存转换          | `projects/pda/quick-ref/data-flows.md` + `projects/wms/skills/stock-consistency.md` |
+| 库存转换          | `projects/pda/quick-ref/data-flows.md`；启用 ai-lab 模板 `stock-consistency` 后凭关键词触发 |
 | 物料转移          | `projects/pda/quick-ref/data-flows.md`                                |
 
 ## 通用/系统

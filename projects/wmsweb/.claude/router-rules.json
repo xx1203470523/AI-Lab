@@ -1,0 +1,30 @@
+{
+  "_comment": "关键词 → 推荐阅读 rules 的映射。hook 通过 $PSScriptRoot 推算 .claude 根，再按 _rule_base 拼绝对路径。复制时必须把 .claude/hooks 和 rules/ 保持相对结构一起搬走。",
+  "_rule_base": "../rules",
+  "groups": [
+    {
+      "name": "page-structure",
+      "keywords": ["页面", "view", "views/", "路由", "router", "lazy", "懒加载", "kebab-case"],
+      "paths": ["page-structure.md"],
+      "hint": "命中页面/路由关键词，建议先读 page-structure.md：目录组织、路由懒加载、文件命名约定、视图行数限制。"
+    },
+    {
+      "name": "component-pattern",
+      "keywords": ["组件", "component", "el-table", "el-form", "el-dialog", "schemas.tsx", "useTable", "Container", "HasPermiButton", "Composition API", "script setup", "新架构", "传统模式"],
+      "paths": ["component-pattern.md"],
+      "hint": "命中组件关键词，建议先读 component-pattern.md：两套页面模式（A 新架构 / B 传统）、列表/弹窗规范、Composition API 约束。"
+    },
+    {
+      "name": "api-layer",
+      "keywords": ["api/", "request", "axios", "接口调用", "pageNum", "pageSize", "params", "post", "put", "delete", "res.code", "totalNum", "result"],
+      "paths": ["api-layer.md"],
+      "hint": "命中 API 调用关键词，建议先读 api-layer.md：API 文件约定、请求方法、响应处理、参数约束。"
+    },
+    {
+      "name": "state-management",
+      "keywords": ["pinia", "store", "useSiteStore", "useDictStore", "useRefreshStore", "useUserStore", "mitt", "v-hasPermi", "HasPermiButton", "权限"],
+      "paths": ["state-management.md"],
+      "hint": "命中状态管理 / 权限关键词，建议先读 state-management.md：Pinia 拆分、字典/刷新信号、权限标识、跨组件通信。"
+    }
+  ]
+}

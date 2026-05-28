@@ -1,0 +1,36 @@
+{
+  "_comment": "PDA 项目 rules 路由。当前只有一个综合 rules 文件 01-pda-patterns.md，按主题切片提示，方便 AI 聚焦阅读相关章节。hook 通过 $PSScriptRoot 推算 .claude 根，再按 _rule_base 拼绝对路径。",
+  "_rule_base": "../rules",
+  "groups": [
+    {
+      "name": "nvue-page",
+      "keywords": ["nvue", ".nvue", "navigationStyle", "新增页面", "rpx", "uni.upx2px"],
+      "paths": ["01-pda-patterns.md"],
+      "hint": "命中 nvue / 新增页面关键词，建议先读 01-pda-patterns.md（pages.json 路由注册 + nvue 限制 + 单位转换章节）。"
+    },
+    {
+      "name": "request-network",
+      "keywords": ["request.js", "uni.request", "401", "登录态", "token", "traceId", "重试", "idempotent", "hideLoading"],
+      "paths": ["01-pda-patterns.md"],
+      "hint": "命中网络/请求关键词，建议先读 01-pda-patterns.md（request.js 章节）：自动 token、401 处理、重试策略、loading 控制。"
+    },
+    {
+      "name": "scan-label",
+      "keywords": ["扫描", "scan", "标签解析", "explainLabel", "MaterialCode", "蓝牙", "bluetooth", "barcode"],
+      "paths": ["01-pda-patterns.md"],
+      "hint": "命中扫描/标签关键词，建议先读 01-pda-patterns.md（标签解析 + 蓝牙扫描章节）：统一走 explainLabel、9/10 段兼容。"
+    },
+    {
+      "name": "voice-navigator",
+      "keywords": ["语音", "voice-utils", "playErrorVoice", "navigator.js", "页面跳转", "uni.navigateTo"],
+      "paths": ["01-pda-patterns.md"],
+      "hint": "命中语音/跳转关键词，建议先读 01-pda-patterns.md（语音提示 + 页面跳转章节）。"
+    },
+    {
+      "name": "menu-version",
+      "keywords": ["菜单", "动态菜单", "getRouters", "menu", "App 更新", "version", "升级"],
+      "paths": ["01-pda-patterns.md"],
+      "hint": "命中菜单/版本关键词，建议先读 01-pda-patterns.md（动态菜单 + version 章节）。"
+    }
+  ]
+}

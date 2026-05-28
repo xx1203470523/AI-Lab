@@ -2,20 +2,19 @@
 
 ## 页面开发
 
-- 新模块/页面 → `skills/new-page.md`
 - 路由配置 → `rules/page-structure.md`
 - 权限控制 → `rules/component-pattern.md`
+- 新增页面流程 → 真实项目内置 `gen` skill
 
 ## API 对接
 
 - 接口调用 → `rules/api-layer.md`
-- 接口调试 → `skills/api-debug.md`
+- 接口调试 → ai-lab 模板 `projects/wmsweb/.claude/skills/api-debug/SKILL.md`（启用后凭"接口报错"等关键词触发）
 - 数据字典 → `rules/state-management.md`
 
 ## 表格/表单
 
 - 列表页 → `rules/component-pattern.md`
-- 新增/编辑 → `skills/new-page.md`
 - 分页/排序 → `rules/component-pattern.md`
 
 ## 状态管理

@@ -1,0 +1,24 @@
+{
+  "_comment": "ai-lab 后端 hook 注册样本 — 复制到真实项目 .claude/settings.json 后启用。注意：args 路径相对于真实项目工作目录。",
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(git *)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", ".claude/hooks/prompt-rules-router.ps1"],
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "_comment": "ai-lab 鍚庣 hook 娉ㄥ唽鏍锋湰 鈥?澶嶅埗鍒扮湡瀹為」鐩?.claude/settings.json 鍚庡惎鐢ㄣ€傛敞鎰忥細args 璺緞鐩稿浜庣湡瀹為」鐩伐浣滅洰褰曘€?,
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(git *)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", ".claude/hooks/prompt-rules-router.ps1"],
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}

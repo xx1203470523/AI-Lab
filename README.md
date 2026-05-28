@@ -150,7 +150,7 @@ quick-ref 用于解决这些问题。
 
 ---
 
-## 3. Rules 只保留“真实坑点”
+## 3. Rules 只保留"真实坑点"，靠 Hook 路由触发
 
 Rules 不写教程。
 
@@ -178,6 +178,39 @@ AI 无法从训练数据得知
 ```
 
 这些属于 AI 已知知识。
+
+### 触发机制：UserPromptSubmit Hook 路由
+
+Claude Code 没有 `.claude/rules/` 这个原生加载机制——任意 `.md` 文件不会被自动读。仅靠 CLAUDE.md 引用 + 让 AI 自己去读，实践中触发率很低。
+
+ai-lab 在每个项目的 `.claude/` 下提供一份 hook 模板（`prompt-rules-router.ps1`）+ 关键词映射（`router-rules.json`），按用户输入的关键词自动注入 "请先读 X.md" 提示，让 AI 在干活前看到对应 rules。
+
+```
+ai-lab/projects/{webapi,wmsweb,pda}/.claude/
+├── hooks/prompt-rules-router.ps1   # hook 主脚本（三项目同款）
+├── router-rules.json               # 关键词→rules 映射（项目特定）
+├── lib/ps-utf8.ps1                 # PS5.1 UTF-8 共享前导
+└── settings.sample.json            # 启用样本
+```
+
+启用方式两种（详见 `core/.claude/hooks/README.md`）：
+
+| 方式 | 用途 | 落点 |
+|---|---|---|
+| 项目内启用 | 团队共享 | 复制到真实项目 `.claude/` |
+| 个人启用 | 跨项目你自用 | 复制到 `~/.claude/`（路径变量化） |
+
+工作流：
+
+```
+用户: "改一下 Service 实现，再写一个 Report"
+    ↓
+hook 命中关键词 service / Report
+    ↓
+注入: 请先读 02-service-layer.md + 04-report-module.md
+    ↓
+AI Read 对应 rules → 再开始作业
+```
 
 ---
 
@@ -235,6 +268,38 @@ context-map 不负责“控制 AI”。
 - 提高上下文命中率
 - 降低 token 消耗
 
+### context-map 的实际触发机制
+
+context-map 自身不会被 AI 自动加载——它是 markdown 文档，不是 Claude Code 原生加载入口。要让它真正起作用，需要一种触发方式：
+
+| 触发方式 | 实现 |
+|---|---|
+| 关键词 → rules（自动） | `prompt-rules-router.ps1` hook + `router-rules.json`，已实现 |
+| 关键词 → skill（自动） | SKILL.md frontmatter 的 `description`，已实现 |
+| 入口文档 → AI 主动读 | `CLAUDE.md` 顶部明确引用 context-map（半自动，需 AI 配合） |
+
+实践经验：**只有 hook + skill frontmatter 是稳定触发**。CLAUDE.md 引用是辅助。把 context-map 当作"给人看的导航文档 + AI 偶尔读的索引"，不要奢望它自动加载。
+
+---
+
+## 6. 配置分层：项目级 / 个人级 / ai-lab
+
+ai-lab 是模板源，最终生效需要复制到 Claude Code 实际加载的位置。配置存在三个层次：
+
+```text
+ai-lab/                       — 模板源（不直接生效）
+真实项目 .claude/             — 项目级（团队共享）
+~/.claude/                    — 个人级（跨项目，你自己用）
+```
+
+| 层 | 适合放 | 例子 |
+|---|---|---|
+| ai-lab | 所有可复用模板的真源 | skill / hook / rules / quick-ref |
+| 项目级 `.claude/` | 团队共同遵守的约束 | 分层 hook、领域 skill、PreToolUse 拦截 |
+| 个人级 `~/.claude/` | 你自己的偏好 | push 流程、commit 风格、跨项目通用 skill |
+
+启用方式：从 ai-lab 复制到对应层。skill 和 hook 之间的优先级（`~/.claude/` 优先于项目）见 Claude Code 官方文档。
+
 ---
 
 # 推荐工作流
@@ -244,11 +309,12 @@ context-map 不负责“控制 AI”。
 ```text
 需求
 ↓
-读取 CLAUDE.md
+[自动] UserPromptSubmit hook 命中关键词 → 注入 rules / skill 提示
+[自动] CLAUDE.md 已加载（项目级）
 ↓
-查看 context-map
+AI 读取被注入的 rules
 ↓
-按需读取 rules / quick-ref / skills
+AI 按需查 quick-ref（业务事实）
 ↓
 生成代码
 ↓
@@ -262,11 +328,11 @@ context-map 不负责“控制 AI”。
 ```text
 需求
 ↓
-定位 skill
+关键词触发 skill（自动）
+↓
+skill 内引用 quick-ref / rules
 ↓
 分析问题
-↓
-必要时查看 quick-ref
 ↓
 生成修复方案
 ↓
